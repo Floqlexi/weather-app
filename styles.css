@@ -1,0 +1,70 @@
+body {
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: url("background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+}
+
+.weather-app {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  width: 450px;
+  text-align: center;
+}
+.weather-app .main-info .weather-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.weather-app .main-info .weather-status h1 {
+  font-size: 72px;
+  margin: 0 20px;
+}
+.weather-app .main-info .weather-status p {
+  font-size: 24px;
+  margin: 0;
+}
+.weather-app .main-info .temp-range {
+  font-size: 18px;
+  margin-top: 10px;
+}
+.weather-app .hourly-forecast {
+  margin-top: 20px;
+}
+.weather-app .hourly-forecast .forecast-header {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+.weather-app .hourly-forecast .forecast-header p {
+  margin: 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+.weather-app .hourly-forecast .forecast {
+  display: flex;
+  justify-content: space-between;
+}
+.weather-app .hourly-forecast .forecast .hour {
+  text-align: center;
+  font-size: 16px;
+  width: 60px;
+}
+.weather-app .hourly-forecast .forecast .hour img {
+  width: 30px;
+  height: 30px;
+  margin: 10px 0;
+}
+.weather-app .hourly-forecast .forecast .hour p {
+  margin: 5px 0;
+}
+
+/*# sourceMappingURL=styles.css.map */
