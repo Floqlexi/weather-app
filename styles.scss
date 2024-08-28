@@ -1,77 +1,201 @@
-body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: url('background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
+$background-color: #f5f5f5;
+$font-color: #333;
+$box-background: rgba(255, 255, 255, 0.8);
+$border-radius: 15px;
+$primary-color: #007bff;
+$input-height: 50px;
+$max-width: 600px;
+$widget-padding: 20px;
+$card-padding: 15px;
+$card-margin: 10px;
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.weather-app {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    padding: 20px;
-    width: 450px;
-    text-align: center;
+@mixin transition($property, $duration) {
+  transition: $property $duration ease-in-out;
+}
 
-    .main-info {
-        .weather-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+body {
+  background: url(background.jpg) no-repeat center center fixed;
+  background-size: cover;
+  font-family: Arial, sans-serif;
+  color: $font-color;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-            h1 {
-                font-size: 72px;
-                margin: 0 20px;
-            }
-            p {
-                font-size: 24px;
-                margin: 0;
-            }
-        }
-        .temp-range {
-            font-size: 18px;
-            margin-top: 10px;
-        }
+.search-bar {
+  @include flex-center;
+  width: 100%;
+  max-width: $max-width;
+  margin: 30px auto;
+
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: $max-width;
+    display: flex;
+    align-items: center;
+
+    input[type="text"] {
+      padding: 0 20px;
+      width: calc(100% - $input-height);
+      height: $input-height;
+      border: none;
+      border-radius: $border-radius 0 0 $border-radius;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      font-size: 18px;
+      @include transition(all, 0.3s);
+
+      &:focus {
+        outline: none;
+        box-shadow: 0px 0px 15px rgba(0, 123, 255, 0.6);
+      }
     }
 
-    .hourly-forecast {
-        margin-top: 20px;
-        .forecast-header {
-            display: flex;
-            justify-content: space-around;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            p {
-                margin: 0;
-                font-size: 16px;
-                cursor: pointer;
-            }
-        }
+    button {
+      height: $input-height;
+      width: $input-height;
+      border: none;
+      border-radius: 0 $border-radius $border-radius 0;
+      background-color: $primary-color;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      @include transition(background-color, 0.3s);
 
-        .forecast {
-            display: flex;
-            justify-content: space-between;
-
-            .hour {
-                text-align: center;
-                font-size: 16px;
-                width: 60px;
-
-                img {
-                    width: 30px;
-                    height: 30px;
-                    margin: 10px 0;
-                }
-
-                p {
-                    margin: 5px 0;
-                }
-            }
-        }
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
     }
+
+    #suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: calc(100% + $input-height);
+        background: white;
+        border-radius: 0 0 $border-radius $border-radius;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: none;
+        z-index: 1000;
+        pointer-events: auto;
+    }
+      li {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: $font-color;
+
+        &:hover {
+          background: $primary-color;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .search-container input:focus ~ #suggestions {
+    display: block;
+  }
+
+.weather-container {
+  background: $box-background;
+  border-radius: $border-radius;
+  padding: $widget-padding;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: $max-width;
+  text-align: center;
+
+  .location {
+    h1 {
+      margin: 0;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 18px;
+      color: darken($font-color, 10%);
+    }
+  }
+
+  .current-weather {
+    h2 {
+      margin: 20px 0 10px;
+      font-size: 60px;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 20px;
+      color: darken($font-color, 15%);
+    }
+  }
+
+  .forecast {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+
+    .hourly {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      .hour {
+        flex: 1;
+        text-align: center;
+
+        p {
+          margin: 5px 0;
+          font-size: 16px;
+        }
+
+        img {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  .other-cities {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: $card-margin;
+
+    .city-card {
+      background: $box-background;
+      border-radius: $border-radius;
+      padding: $card-padding;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      text-align: center;
+      margin: 0 $card-margin;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
 }
