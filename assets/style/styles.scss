@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $background-color: #f5f5f5;
 $font-color: #333;
 $box-background: rgba(255, 255, 255, 0.8);
@@ -39,14 +41,14 @@ body {
 
   .search-container {
     position: relative;
-    width: 100%;
-    max-width: $max-width;
     display: flex;
     align-items: center;
+    width: 100%;
+    max-width: $max-width;
 
     input[type="text"] {
+      flex: 1;
       padding: 0 20px;
-      width: calc(100% - $input-height);
       height: $input-height;
       border: none;
       border-radius: $border-radius 0 0 $border-radius;
@@ -62,7 +64,7 @@ body {
 
     button {
       height: $input-height;
-      width: $input-height;
+      width: $max-width;
       border: none;
       border-radius: 0 $border-radius $border-radius 0;
       background-color: $primary-color;
@@ -71,60 +73,61 @@ body {
       justify-content: center;
       align-items: center;
       @include transition(background-color, 0.3s);
-    
+      margin-left: -1px;
+
       img {
         width: 24px;
         height: 24px;
       }
-    
+
       &:hover {
         background-color: darken($primary-color, 10%);
       }
     }
-    
 
     #suggestions {
       position: absolute;
-      top: 100%;
+      top: calc(100% + 5px);
       left: 0;
-      width: 553px; 
+      width: 100%;
       background: white;
-      border-radius: $border-radius 0 0 $border-radius;
+      border-radius: 0 0 $border-radius $border-radius;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
       list-style: none;
       padding: 0;
       margin: 0;
-      display: none;
       z-index: 1000;
-      pointer-events: auto;
+      display: none;
     }
-      li {
-        display: block;
-        padding: 10px;
-        text-decoration: none;
-        color: $font-color;
 
-        &:hover {
-          background: $primary-color;
-          color: white;
-          border-radius: $border-radius;
-        }
+    li {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: $font-color;
+      cursor: pointer;
+
+      &:hover {
+        background: $primary-color;
+        color: white;
       }
     }
-  }
 
-  .search-container input:focus ~ #suggestions {
-    display: block;
+    input:focus ~ #suggestions {
+      display: block;
+    }
   }
+}
 
 .weather-container {
   background: $box-background;
   border-radius: $border-radius;
-  padding: $widget-padding;
+  padding: math.div($widget-padding, 2);
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: $max-width;
   text-align: center;
+  box-sizing: border-box;
 
   .location {
     h1 {
@@ -158,52 +161,155 @@ body {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 
     .hourly {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
       width: 100%;
+    }
 
-      .hour {
-        flex: 1;
-        text-align: center;
+    .hour {
+      flex: 1;
+      text-align: center;
+      min-width: 60px;
 
-        p {
-          margin: 5px 0;
-          font-size: 16px;
-        }
+      p {
+        margin: 5px 0;
+        font-size: 16px;
+      }
 
-        img {
-          width: 40px;
-          height: 40px;
-        }
+      img {
+        width: 40px;
+        height: 40px;
       }
     }
   }
+}
+
+.other-cities {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: $card-margin;
+  margin-top: 30px;
+  width: 100%;
+  max-width: $max-width;
+
+  .city-card {
+    background: $box-background;
+    border-radius: $border-radius;
+    padding: math.div($card-padding, 2);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: calc(33.333% - $card-margin);
+    margin-bottom: 20px;
+    box-sizing: border-box;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .search-bar {
+    margin: 20px auto;
+  }
+
+  .weather-container {
+    padding: math.div($widget-padding, 2);
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .search-container {
+    flex-wrap: nowrap; 
+  }
+
+  .search-container input[type="text"] {
+    width: calc(100% - $input-height);
+  }
+
+  .search-container button {
+    width: $input-height; 
+    margin-left: 0;
+  }
+
+  .weather-container {
+    max-width: 90%;
+  }
 
   .other-cities {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    gap: $card-margin;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .city-card {
-      background: $box-background;
-      border-radius: $border-radius;
-      padding: $card-padding;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      flex: 1;
-      text-align: center;
-      margin: 0 $card-margin;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+  .city-card {
+    width: 100%;
+  }
+}
 
-      img {
-        width: 60px;
-        height: 60px;
-      }
+@media screen and (max-width: 768px) {
+  .search-bar {
+    margin: 15px auto;
+  }
+
+  .search-container {
+    flex-direction: column;
+  }
+
+  .search-container input[type="text"] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .search-container button {
+    width: 100%;
+    height: auto; // İkonun boyutunu korumak için
+    margin-left: 0;
+    margin-top: -10px; // İkonun dikey olarak hizalanması için
+    img {
+      width: 24px;
+      height: 24px;
     }
+  }
+
+  .forecast {
+    flex-direction: column;
+  }
+
+  .hourly {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .weather-container {
+    padding: math.div($widget-padding, 2);
+  }
+
+  .current-weather h2 {
+    font-size: 48px;
+  }
+
+  .current-weather p {
+    font-size: 18px;
+  }
+
+  .hourly .hour {
+    min-width: 60px;
+  }
+
+  .city-card {
+    padding: math.div($card-padding, 2);
   }
 }
