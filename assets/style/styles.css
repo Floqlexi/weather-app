@@ -231,7 +231,6 @@ body {
     flex-direction: column;
   }
   .hourly {
-    flex-direction: column;
     overflow-x: visible;
   }
 }
