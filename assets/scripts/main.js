@@ -19,21 +19,21 @@ searchInput.addEventListener("keyup", function (e) {
                     suggestion.classList.add("suggestion");
                     suggestion.innerHTML = item.name;
                     suggestion.addEventListener("click", function () {
-                        GetLocationDetail(item);
+                        GetMainLocationDetail(item);
                     });
                     suggestionsContainer.appendChild(suggestion);
                 });
             });
     }
 });
-async function GetLocationMainDetail(item) {
+async function GetDetailedInfoOfLocation(item) {
     return await fetch(`${API_DETAIL}lat=${item.coord.lat}&lon=${item.coord.lon}&${API_KEY_PARAM}`).then((response) => response.json());
 }
 
-async function GetLocationDetail(item) {
+async function GetMainLocationDetail(item) {
     let suggestionsContainer = document.getElementById("suggestions");
     suggestionsContainer.style.display = "none";
-    let detail = await GetLocationMainDetail(item);
+    let detail = await GetDetailedInfoOfLocation(item);
 
     let mainLocationName = document.getElementById("main-location-name");
     let mainLocationDate = document.getElementById("main-location-date");
@@ -44,8 +44,9 @@ async function GetLocationDetail(item) {
     mainLocationName.innerHTML = item.name;
     mainLocationDate.innerHTML = new Date(detail.current.dt * 1000).toLocaleDateString();
     mainLocationDegree.innerHTML = Math.round(detail.current.temp);
-    mainLocationWarm.innerHTML = detail.current.weather[0].description;
-    mainLocationMinMax.innerHTML = `${Math.round(detail.daily[0].temp.min)} / ${Math.round(detail.daily[0].temp.max)}`;
+    let mainWeather = detail.current.weather[0].main;
+    mainLocationWarm.innerHTML = ` <img src="${GetWeatherImage(mainWeather)}" alt="${mainWeather}" /> ${detail.current.weather[0].description}`;
+    mainLocationMinMax.innerHTML = `${Math.round(detail.daily[0].temp.min)}° / ${Math.round(detail.daily[0].temp.max)}°`;
 
     let dailyContainer = document.getElementById("daily-container");
     dailyContainer.innerHTML = "";
@@ -53,21 +54,7 @@ async function GetLocationDetail(item) {
         let hour = document.createElement("div");
         hour.classList.add("hour");
         let weather = item.weather[0].main;
-        let imageSrc = "";
-        switch (weather) {
-            case "Clouds":
-                imageSrc = "/assets/images/cloudy.png";
-                break;
-            case "Rain":
-                imageSrc = "/assets/images/rainy.png";
-                break;
-            case "Clear":
-                imageSrc = "/assets/images/sunny.png";
-                break;
-            default:
-                imageSrc = "/assets/images/cloudy.png";
-                break;
-        }
+        let imageSrc = GetWeatherImage(weather);
         let dayName = new Date(item.dt * 1000).toLocaleDateString("en-US", {weekday: "short"});
         if (index === 0) {
             dayName = "Today";
@@ -81,13 +68,13 @@ async function GetLocationDetail(item) {
         dailyContainer.appendChild(hour);
     });
 
-    SaveToLocalStorage(item);
+    SaveToLocalStorage(item, detail);
 
     let detailContainer = document.getElementById("detail-container");
     detailContainer.style.display = "block";
 }
 
-function SaveToLocalStorage(item) {
+function SaveToLocalStorage(item, detail) {
     let localData = localStorage.getItem("locations");
     let locations = [];
     if (localData) {
@@ -97,6 +84,18 @@ function SaveToLocalStorage(item) {
     let isExist = locations.some((location) => location.name === item.name);
     if (!isExist) {
         locations.unshift(item);
+
+        let locationHistory = document.getElementById("location-history");
+        let cityCard = document.createElement("div");
+        cityCard.classList.add("city-card");
+        let weather = detail.current.weather[0].main;
+        let imageSrc = GetWeatherImage(weather);
+        cityCard.innerHTML = `
+        <h3>${item.name}</h3>
+        <img src="${imageSrc}" alt="${weather}" />
+        <p>${Math.round(detail.current.temp)}° ${weather}</p>
+    `;
+        locationHistory.appendChild(cityCard);
     }
 
     if (locations.length > 3) {
@@ -105,7 +104,25 @@ function SaveToLocalStorage(item) {
 
     localStorage.setItem("locations", JSON.stringify(locations));
 }
+function GetWeatherImage(weather) {
+    let imageSrc = "";
+    switch (weather) {
+        case "Clouds":
+            imageSrc = "/assets/images/cloudy.png";
+            break;
+        case "Rain":
+            imageSrc = "/assets/images/rainy.png";
+            break;
+        case "Clear":
+            imageSrc = "/assets/images/sunny.png";
+            break;
+        default:
+            imageSrc = "/assets/images/cloudy.png";
+            break;
+    }
 
+    return imageSrc;
+}
 async function GetFromLocalStorage() {
     let localData = localStorage.getItem("locations");
     let locations = [];
@@ -119,23 +136,9 @@ async function GetFromLocalStorage() {
     locations.forEach(async (item) => {
         let cityCard = document.createElement("div");
         cityCard.classList.add("city-card");
-        let detail = await GetLocationMainDetail(item);
+        let detail = await GetDetailedInfoOfLocation(item);
         let weather = detail.current.weather[0].main;
-        let imageSrc = "";
-        switch (weather) {
-            case "Clouds":
-                imageSrc = "/assets/images/cloudy.png";
-                break;
-            case "Rain":
-                imageSrc = "/assets/images/rainy.png";
-                break;
-            case "Clear":
-                imageSrc = "/assets/images/sunny.png";
-                break;
-            default:
-                imageSrc = "/assets/images/cloudy.png";
-                break;
-        }
+        let imageSrc = GetWeatherImage(weather);
 
         cityCard.innerHTML = `
             <h3>${item.name}</h3>
@@ -147,7 +150,7 @@ async function GetFromLocalStorage() {
     if (locations.length) {
         let firstItem = locations[0];
         if (firstItem) {
-            GetLocationDetail(firstItem);
+            GetMainLocationDetail(firstItem);
         }
     } else {
         let detailContainer = document.getElementById("detail-container");

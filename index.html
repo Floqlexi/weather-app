@@ -5,6 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Weather App</title>
         <link rel="stylesheet" href="/assets/style/styles.css" />
+        <style>
+            p#main-location-warm {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+            p#main-location-warm > img {
+                max-width: 50px;
+            }
+            p#main-location-min-max {
+                position: absolute;
+                right: 1rem;
+                top: 0;
+            }
+            .weather-container {
+                position: relative;
+            }
+        </style>
     </head>
     <body>
         <div class="search-bar">
@@ -18,6 +37,8 @@
         </div>
 
         <div class="weather-container" id="detail-container">
+            <p id="main-location-min-max"></p>
+
             <div class="location">
                 <h1 id="main-location-name"></h1>
                 <p id="main-location-date"></p>
@@ -25,7 +46,6 @@
             <div class="current-weather">
                 <h2 id="main-location-degree"></h2>
                 <p id="main-location-warm"></p>
-                <p id="main-location-min-max"></p>
             </div>
             <div class="forecast">
                 <div class="hourly" id="daily-container"></div>
